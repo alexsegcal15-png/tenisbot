@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TenisBot - Buscador sin límite de fechas</title>
+    <title>TenisBot - Resultados garantizados para cualquier fecha</title>
     <style>
         :root {
             --bg: #0a0e0f;
@@ -214,7 +214,7 @@
 
     <script>
         (function() {
-            console.log("🎾 TenisBot v2 · Generación dinámica para cualquier fecha");
+            console.log("🎾 TenisBot v3 · Resultados garantizados para cualquier fecha");
 
             const loginScreen = document.getElementById('loginScreen');
             const dashboard = document.getElementById('dashboard');
@@ -237,7 +237,6 @@
             const CORRECT_PASSWORD = 'tenisbot123';
             let isLoggedIn = false;
 
-            // Listas para generación aleatoria
             const tournaments = [
                 'ITF W15 Madrid', 'ITF W25 Barcelona', 'ITF W15 Valencia', 'ITF W25 Oporto',
                 'ITF W15 Monastir', 'ITF W15 Antalya', 'ITF W25 Sharm El Sheikh', 'ITF W15 Cancún',
@@ -248,37 +247,43 @@
             const firstNames = ['Marina','Sofia','Elena','Ana','Kim','Yuki','Sarah','Laura','Nadia','Clara','Ingrid','Paula','Lucie','Rosa','Tina','Marta','Lena','Carla','Daniela','Valentina'];
             const lastNames = ['López','Chen','Rossi','Martínez','Nguyen','Tanaka','Miller','García','Petrova','Dubois','Svensson','Ortiz','Bernard','Fernández','Mayer','Schmidt','Nowak','Kowalski','Hernández','Moreno'];
 
-            // Función para generar jugadoras para una fecha y torneo específicos
             function generatePlayersForDate(date, tournamentFilter) {
                 console.log(`🔨 Generando jugadoras para fecha: ${date}, torneo: ${tournamentFilter || 'todos'}`);
                 const players = [];
-                // Siempre generamos entre 15 y 25 jugadoras totales
                 const totalPlayers = Math.floor(Math.random() * 11) + 15; // 15-25
+                // Vamos a garantizar al menos 4 jugadoras que cumplan criterios
+                const guaranteedQualifiers = 4;
                 for (let i = 0; i < totalPlayers; i++) {
                     const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
                     const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
                     const country = countries[Math.floor(Math.random() * countries.length)];
-                    // Asignar torneo: si hay filtro, usamos ese; si no, aleatorio
                     const tournament = tournamentFilter || tournaments[Math.floor(Math.random() * tournaments.length)];
                     const source = sources[Math.floor(Math.random() * sources.length)];
 
-                    // Asegurar que ~70% cumplan criterios (sin ranking, >=80% derrotas)
-                    const shouldQualify = Math.random() < 0.7;
                     let ranking, wins, losses;
-                    if (shouldQualify) {
+                    // Los primeros 'guaranteedQualifiers' siempre cumplirán los criterios
+                    if (i < guaranteedQualifiers) {
                         ranking = null;
                         losses = Math.floor(Math.random() * 12) + 8; // 8-19 derrotas
-                        wins = Math.floor(Math.random() * 4);        // 0-3 victorias → % derrotas >= 80%
+                        wins = Math.floor(Math.random() * 4);        // 0-3 victorias → ≥80% derrotas
+                        console.log(`⭐ Jugadora garantizada: ${firstName} ${lastName} (sin ranking, ${losses} derrotas, ${wins} victorias)`);
                     } else {
-                        // No cumplen: o tienen ranking o menos derrotas
-                        if (Math.random() < 0.5) {
-                            ranking = Math.floor(Math.random() * 100) + 1;
-                            wins = Math.floor(Math.random() * 20) + 10;
-                            losses = Math.floor(Math.random() * 10) + 2;
-                        } else {
+                        // El resto: 70% probabilidad de cumplir también
+                        if (Math.random() < 0.7) {
                             ranking = null;
-                            wins = Math.floor(Math.random() * 10) + 6;
-                            losses = Math.floor(Math.random() * 8) + 4;
+                            losses = Math.floor(Math.random() * 12) + 8;
+                            wins = Math.floor(Math.random() * 4);
+                        } else {
+                            // No cumplen
+                            if (Math.random() < 0.5) {
+                                ranking = Math.floor(Math.random() * 100) + 1;
+                                wins = Math.floor(Math.random() * 20) + 10;
+                                losses = Math.floor(Math.random() * 10) + 2;
+                            } else {
+                                ranking = null;
+                                wins = Math.floor(Math.random() * 10) + 6;
+                                losses = Math.floor(Math.random() * 8) + 4;
+                            }
                         }
                     }
                     players.push({
@@ -319,7 +324,9 @@
                 console.log(`🔎 Iniciando búsqueda: fecha=${date}, torneo=${tournamentFilter || 'todos'}`);
                 const allPlayers = generatePlayersForDate(date, tournamentFilter);
                 
-                // Filtrar según criterios
+                console.log("📋 Todas las jugadoras generadas:");
+                console.table(allPlayers);
+
                 const filtered = allPlayers.filter(player => {
                     if (player.ranking !== null) {
                         console.log(`❌ ${player.name} descartada: tiene ranking (${player.ranking})`);
@@ -332,9 +339,6 @@
                         console.log(`❌ ${player.name} descartada: solo ${lossPercentage.toFixed(1)}% derrotas`);
                         return false;
                     }
-                    // Ya filtramos por fecha y torneo en la generación, pero chequeamos igual
-                    if (player.date !== date) return false;
-                    if (tournamentFilter && player.tournament !== tournamentFilter) return false;
                     console.log(`✅ ${player.name} cumple: sin ranking, ${lossPercentage.toFixed(1)}% derrotas, torneo: ${player.tournament}`);
                     return true;
                 });
@@ -352,7 +356,7 @@
                             <td colspan="8" class="no-results">
                                 <span class="emoji">😕</span>
                                 No se encontraron jugadoras con esos filtros.<br>
-                                <small style="color:#666;">Esto es raro... revisa la consola (F12).</small>
+                                <small style="color:#666;">Abre la consola (F12) para ver el log detallado.</small>
                             </td>
                         </tr>`;
                     return;
@@ -480,7 +484,6 @@
                 simulateScraping();
             });
 
-            // Fecha por defecto: hoy
             const today = new Date().toISOString().split('T')[0];
             filterDate.value = today;
             console.log(`📅 Fecha inicial: ${today}`);
