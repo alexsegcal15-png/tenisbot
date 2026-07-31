@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TenisBot - Buscador de Jugadoras</title>
+    <title>TenisBot - Buscador sin límite de fechas</title>
     <style>
         :root {
             --bg: #0a0e0f;
@@ -16,18 +16,9 @@
             --border: #2a3338;
             --danger: #ff5252;
             --warning: #ffb74d;
-            --clay: #d4956b;
-            --grass: #4caf50;
-            --hard: #5c9ce6;
             --gold: #ffc107;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin:0; padding:0; box-sizing:border-box; }
         body {
             font-family: 'Segoe UI', 'Inter', system-ui, sans-serif;
             background: var(--bg);
@@ -36,585 +27,117 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background-image:
-                radial-gradient(ellipse at 20% 50%, rgba(0, 230, 118, 0.04) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 20%, rgba(255, 183, 77, 0.03) 0%, transparent 60%),
-                radial-gradient(ellipse at 60% 80%, rgba(76, 175, 80, 0.03) 0%, transparent 60%);
+            background-image: radial-gradient(ellipse at 20% 50%, rgba(0,230,118,0.04) 0%, transparent 60%),
+            radial-gradient(ellipse at 80% 20%, rgba(255,183,77,0.03) 0%, transparent 60%),
+            radial-gradient(ellipse at 60% 80%, rgba(76,175,80,0.03) 0%, transparent 60%);
         }
-
-        /* ============ LOGIN SCREEN ============ */
+        .login-container, .dashboard { width: 100%; }
         .login-container {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 50px 40px;
-            width: 420px;
-            max-width: 95vw;
-            text-align: center;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
-            position: relative;
-            overflow: hidden;
+            background: var(--surface); border:1px solid var(--border); border-radius:20px;
+            padding:50px 40px; width:420px; max-width:95vw; text-align:center;
+            box-shadow:0 25px 60px rgba(0,0,0,0.5); position:relative; overflow:hidden;
         }
         .login-container::before {
-            content: '';
-            position: absolute;
-            top: -60px;
-            left: -60px;
-            width: 150px;
-            height: 150px;
-            background: var(--accent);
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.12;
-            pointer-events: none;
+            content:''; position:absolute; top:-60px; left:-60px; width:150px; height:150px;
+            background:var(--accent); border-radius:50%; filter:blur(80px); opacity:0.12; pointer-events:none;
         }
         .login-container::after {
-            content: '';
-            position: absolute;
-            bottom: -50px;
-            right: -50px;
-            width: 120px;
-            height: 120px;
-            background: var(--gold);
-            border-radius: 50%;
-            filter: blur(70px);
-            opacity: 0.08;
-            pointer-events: none;
-        }
-        .login-icon {
-            width: 64px;
-            height: 64px;
-            margin: 0 auto 20px;
-            background: var(--surface2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            position: relative;
-            z-index: 1;
-            border: 2px solid var(--border);
-        }
-        .login-container h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 6px;
-            letter-spacing: -0.5px;
-            position: relative;
-            z-index: 1;
-            color: #fff;
-        }
-        .login-container h1 span {
-            color: var(--accent);
-        }
-        .login-container .subtitle {
-            font-size: 0.85rem;
-            color: var(--text2);
-            margin-bottom: 30px;
-            position: relative;
-            z-index: 1;
-        }
-        .input-group {
-            position: relative;
-            z-index: 1;
-            margin-bottom: 20px;
-        }
-        .input-group input {
-            width: 100%;
-            padding: 14px 18px;
-            background: var(--surface2);
-            border: 1.5px solid var(--border);
-            border-radius: 12px;
-            color: #fff;
-            font-size: 1rem;
-            outline: none;
-            transition: all 0.3s;
-            letter-spacing: 1px;
-            font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
-        }
-        .input-group input:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 4px rgba(0, 230, 118, 0.08);
-        }
-        .input-group input::placeholder {
-            color: #5a6065;
-            letter-spacing: 0;
-            font-family: 'Segoe UI', 'Inter', system-ui, sans-serif;
-        }
-        .btn-login {
-            width: 100%;
-            padding: 14px;
-            background: var(--accent);
-            color: #000;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-            z-index: 1;
-            letter-spacing: 0.5px;
-        }
-        .btn-login:hover {
-            background: var(--accent2);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 230, 118, 0.25);
-        }
-        .error-msg {
-            color: var(--danger);
-            font-size: 0.85rem;
-            margin-top: 8px;
-            display: none;
-            position: relative;
-            z-index: 1;
-            min-height: 20px;
-        }
-        .error-msg.show {
-            display: block;
-            animation: shake 0.4s ease;
-        }
-        @keyframes shake {
-            0%,
-            100% {
-                transform: translateX(0);
-            }
-            25% {
-                transform: translateX(-6px);
-            }
-            50% {
-                transform: translateX(6px);
-            }
-            75% {
-                transform: translateX(-4px);
-            }
-        }
-        .login-footer {
-            position: relative;
-            z-index: 1;
-            margin-top: 20px;
-            font-size: 0.7rem;
-            color: #4a5055;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .login-footer .dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-        .dot.green {
-            background: var(--accent);
-        }
-        .dot.orange {
-            background: var(--warning);
-        }
-        .dot.blue {
-            background: var(--hard);
-        }
-
-        /* ============ DASHBOARD ============ */
-        .dashboard {
-            display: none;
-            width: 100%;
-            max-width: 1100px;
-            padding: 20px;
-            margin: 0 auto;
-        }
-        .dashboard.active {
-            display: block;
-        }
-        .topbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 16px 24px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        .topbar .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .topbar .logo-dot {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            font-weight: 900;
-            color: #000;
-        }
-        .topbar h2 {
-            font-size: 1.3rem;
-            color: #fff;
-        }
-        .topbar h2 span {
-            color: var(--accent);
-        }
-        .btn-logout {
-            padding: 10px 20px;
-            background: transparent;
-            border: 1.5px solid var(--border);
-            color: var(--text2);
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: all 0.3s;
-        }
-        .btn-logout:hover {
-            border-color: var(--danger);
-            color: var(--danger);
-        }
-        .filter-panel {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 20px 24px;
-            margin-bottom: 20px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-            align-items: flex-end;
-        }
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        .filter-group label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text2);
-            font-weight: 600;
-        }
-        .filter-group input,
-        .filter-group select {
-            padding: 10px 14px;
-            background: var(--surface2);
-            border: 1.5px solid var(--border);
-            border-radius: 10px;
-            color: #fff;
-            font-size: 0.9rem;
-            outline: none;
-            min-width: 160px;
-            transition: all 0.3s;
-        }
-        .filter-group input:focus,
-        .filter-group select:focus {
-            border-color: var(--accent);
-        }
-        .filter-group select {
-            cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a0a0a0' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 12px center;
-            padding-right: 36px;
-        }
-        .btn-check {
-            padding: 11px 28px;
-            background: var(--accent);
-            color: #000;
-            border: none;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            letter-spacing: 0.5px;
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .btn-check:hover {
-            background: var(--accent2);
-            box-shadow: 0 6px 20px rgba(0, 230, 118, 0.3);
-            transform: translateY(-1px);
-        }
-        .btn-check:disabled {
-            background: #3a4a40;
-            color: #6a7a70;
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: none;
-        }
-        .btn-check .spinner {
-            display: none;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #000;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 0.7s linear infinite;
-        }
-        .btn-check.loading .spinner {
-            display: inline-block;
-        }
-        .btn-check.loading .btn-text {
-            display: none;
-        }
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* Progress area */
-        .progress-area {
-            display: none;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 20px 24px;
-            margin-bottom: 20px;
-        }
-        .progress-area.active {
-            display: block;
-        }
-        .progress-area h4 {
-            font-size: 0.85rem;
-            color: var(--text2);
-            margin-bottom: 14px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .scrape-sites {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-            margin-bottom: 14px;
-        }
-        .scrape-site {
-            flex: 1;
-            min-width: 140px;
-            background: var(--surface2);
-            border-radius: 10px;
-            padding: 14px;
-            text-align: center;
-            border: 1.5px solid var(--border);
-            transition: all 0.4s;
-        }
-        .scrape-site .site-name {
-            font-weight: 700;
-            font-size: 0.85rem;
-            margin-bottom: 6px;
-        }
-        .scrape-site .site-status {
-            font-size: 0.7rem;
-            color: var(--text2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-        .scrape-site .mini-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-            background: #444;
-            transition: all 0.3s;
-        }
-        .scrape-site.done {
-            border-color: var(--accent);
-            background: rgba(0, 230, 118, 0.05);
-        }
-        .scrape-site.done .mini-dot {
-            background: var(--accent);
-            box-shadow: 0 0 8px var(--accent);
-        }
-        .scrape-site.scraping {
-            border-color: var(--warning);
-            animation: pulse-border 1s ease-in-out infinite;
-        }
-        .scrape-site.scraping .mini-dot {
-            background: var(--warning);
-            animation: pulse-dot 0.6s ease-in-out infinite;
-        }
-        @keyframes pulse-border {
-            0%,
-            100% {
-                border-color: var(--warning);
-            }
-            50% {
-                border-color: #ff8c00;
-            }
-        }
-        @keyframes pulse-dot {
-            0%,
-            100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.3;
-            }
-        }
-        .progress-bar-wrap {
-            height: 6px;
-            background: var(--surface2);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        .progress-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent), #00ff88);
-            border-radius: 3px;
-            width: 0%;
-            transition: width 0.5s ease;
-        }
-
-        /* Results */
-        .results-area {
-            display: none;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 20px 24px;
-            overflow: hidden;
-        }
-        .results-area.active {
-            display: block;
-        }
-        .results-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .results-header h3 {
-            font-size: 1.1rem;
-            color: #fff;
-        }
-        .results-header .count-badge {
-            background: var(--accent);
-            color: #000;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 0.8rem;
-        }
-        .table-wrap {
-            overflow-x: auto;
-            border-radius: 10px;
-            border: 1px solid var(--border);
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.85rem;
-            min-width: 700px;
-        }
-        table th {
-            background: var(--surface2);
-            padding: 12px 14px;
-            text-align: left;
-            font-weight: 600;
-            color: var(--text2);
-            text-transform: uppercase;
-            font-size: 0.7rem;
-            letter-spacing: 1px;
-            border-bottom: 1px solid var(--border);
-        }
-        table td {
-            padding: 12px 14px;
-            border-bottom: 1px solid rgba(42, 51, 56, 0.5);
-            color: #ccc;
-        }
-        table tbody tr {
-            transition: background 0.2s;
-        }
-        table tbody tr:hover {
-            background: rgba(255, 255, 255, 0.02);
-        }
-        .badge-no-ranking {
-            background: rgba(255, 82, 82, 0.2);
-            color: #ff6b6b;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-        .badge-loss {
-            background: rgba(255, 152, 0, 0.2);
-            color: #ffb74d;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-        .badge-source {
-            font-size: 0.68rem;
-            color: var(--text2);
-            background: var(--surface2);
-            padding: 3px 8px;
-            border-radius: 4px;
-            white-space: nowrap;
-        }
-        .no-results {
-            text-align: center;
-            padding: 40px;
-            color: var(--text2);
-        }
-        .no-results .emoji {
-            font-size: 3rem;
-            display: block;
-            margin-bottom: 12px;
-        }
-
-        .login-container.hidden {
-            display: none;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .filter-panel {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .filter-group input,
-            .filter-group select {
-                min-width: auto;
-                width: 100%;
-            }
-            .btn-check {
-                width: 100%;
-                justify-content: center;
-            }
-            .scrape-sites {
-                flex-direction: column;
-            }
-            .topbar {
-                flex-direction: column;
-                text-align: center;
-            }
-            .login-container {
-                padding: 30px 20px;
-            }
+            content:''; position:absolute; bottom:-50px; right:-50px; width:120px; height:120px;
+            background:var(--gold); border-radius:50%; filter:blur(70px); opacity:0.08; pointer-events:none;
+        }
+        .login-icon { width:64px; height:64px; margin:0 auto 20px; background:var(--surface2); border-radius:50%;
+            display:flex; align-items:center; justify-content:center; font-size:32px; position:relative; z-index:1;
+            border:2px solid var(--border);
+        }
+        .login-container h1 { font-size:1.8rem; font-weight:700; margin-bottom:6px; letter-spacing:-0.5px;
+            position:relative; z-index:1; color:#fff; }
+        .login-container h1 span { color:var(--accent); }
+        .login-container .subtitle { font-size:0.85rem; color:var(--text2); margin-bottom:30px; position:relative; z-index:1; }
+        .input-group { position:relative; z-index:1; margin-bottom:20px; }
+        .input-group input { width:100%; padding:14px 18px; background:var(--surface2); border:1.5px solid var(--border);
+            border-radius:12px; color:#fff; font-size:1rem; outline:none; transition:all 0.3s; letter-spacing:1px;
+            font-family: 'SF Mono','Consolas','Monaco',monospace;
+        }
+        .input-group input:focus { border-color:var(--accent); box-shadow:0 0 0 4px rgba(0,230,118,0.08); }
+        .btn-login { width:100%; padding:14px; background:var(--accent); color:#000; border:none; border-radius:12px;
+            font-size:1rem; font-weight:700; cursor:pointer; transition:all 0.3s; position:relative; z-index:1; letter-spacing:0.5px;
+        }
+        .btn-login:hover { background:var(--accent2); transform:translateY(-2px); box-shadow:0 8px 25px rgba(0,230,118,0.25); }
+        .error-msg { color:var(--danger); font-size:0.85rem; margin-top:8px; display:none; position:relative; z-index:1; min-height:20px; }
+        .error-msg.show { display:block; animation:shake 0.4s ease; }
+        @keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 50%{transform:translateX(6px);} 75%{transform:translateX(-4px);} }
+        .login-footer { position:relative; z-index:1; margin-top:20px; font-size:0.7rem; color:#4a5055; display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; }
+        .dot { width:6px; height:6px; border-radius:50%; display:inline-block; }
+        .dot.green { background:var(--accent); } .dot.orange { background:var(--warning); } .dot.blue { background:#5c9ce6; }
+        .dashboard { display:none; max-width:1100px; margin:0 auto; padding:20px; }
+        .dashboard.active { display:block; }
+        .topbar { display:flex; align-items:center; justify-content:space-between; background:var(--surface); border:1px solid var(--border);
+            border-radius:16px; padding:16px 24px; margin-bottom:20px; flex-wrap:wrap; gap:12px; }
+        .logo-area { display:flex; align-items:center; gap:12px; }
+        .logo-dot { width:40px; height:40px; border-radius:50%; background:var(--accent); display:flex; align-items:center;
+            justify-content:center; font-size:20px; font-weight:900; color:#000; }
+        .topbar h2 { font-size:1.3rem; color:#fff; } .topbar h2 span { color:var(--accent); }
+        .btn-logout { padding:10px 20px; background:transparent; border:1.5px solid var(--border); color:var(--text2);
+            border-radius:10px; cursor:pointer; font-size:0.85rem; transition:all 0.3s; }
+        .btn-logout:hover { border-color:var(--danger); color:var(--danger); }
+        .filter-panel { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px 24px;
+            margin-bottom:20px; display:flex; flex-wrap:wrap; gap:16px; align-items:flex-end; }
+        .filter-group { display:flex; flex-direction:column; gap:6px; }
+        .filter-group label { font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; color:var(--text2); font-weight:600; }
+        .filter-group input, .filter-group select { padding:10px 14px; background:var(--surface2); border:1.5px solid var(--border);
+            border-radius:10px; color:#fff; font-size:0.9rem; outline:none; min-width:160px; transition:all 0.3s; }
+        .filter-group input:focus, .filter-group select:focus { border-color:var(--accent); }
+        .filter-group select { cursor:pointer; appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a0a0a0' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'%3E%3C/path%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; padding-right:36px; }
+        .btn-check { padding:11px 28px; background:var(--accent); color:#000; border:none; border-radius:10px; font-size:0.95rem;
+            font-weight:700; cursor:pointer; transition:all 0.3s; letter-spacing:0.5px; white-space:nowrap; display:flex; align-items:center; gap:8px; }
+        .btn-check:hover { background:var(--accent2); box-shadow:0 6px 20px rgba(0,230,118,0.3); transform:translateY(-1px); }
+        .btn-check:disabled { background:#3a4a40; color:#6a7a70; cursor:not-allowed; }
+        .btn-check .spinner { display:none; width:16px; height:16px; border:2px solid #000; border-top-color:transparent; border-radius:50%; animation:spin 0.7s linear infinite; }
+        .btn-check.loading .spinner { display:inline-block; }
+        .btn-check.loading .btn-text { display:none; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+        .progress-area { display:none; background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px 24px; margin-bottom:20px; }
+        .progress-area.active { display:block; }
+        .progress-area h4 { font-size:0.85rem; color:var(--text2); margin-bottom:14px; text-transform:uppercase; letter-spacing:1px; }
+        .scrape-sites { display:flex; gap:16px; flex-wrap:wrap; margin-bottom:14px; }
+        .scrape-site { flex:1; min-width:140px; background:var(--surface2); border-radius:10px; padding:14px; text-align:center; border:1.5px solid var(--border); transition:all 0.4s; }
+        .scrape-site .site-name { font-weight:700; font-size:0.85rem; margin-bottom:6px; }
+        .scrape-site .site-status { font-size:0.7rem; color:var(--text2); display:flex; align-items:center; justify-content:center; gap:6px; }
+        .scrape-site .mini-dot { width:8px; height:8px; border-radius:50%; display:inline-block; background:#444; transition:all 0.3s; }
+        .scrape-site.done { border-color:var(--accent); background:rgba(0,230,118,0.05); }
+        .scrape-site.done .mini-dot { background:var(--accent); box-shadow:0 0 8px var(--accent); }
+        .scrape-site.scraping { border-color:var(--warning); animation:pulse-border 1s ease-in-out infinite; }
+        .scrape-site.scraping .mini-dot { background:var(--warning); animation:pulse-dot 0.6s ease-in-out infinite; }
+        @keyframes pulse-border { 0%,100%{border-color:var(--warning);} 50%{border-color:#ff8c00;} }
+        @keyframes pulse-dot { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+        .progress-bar-wrap { height:6px; background:var(--surface2); border-radius:3px; overflow:hidden; }
+        .progress-bar-fill { height:100%; background:linear-gradient(90deg,var(--accent),#00ff88); border-radius:3px; width:0%; transition:width 0.5s ease; }
+        .results-area { display:none; background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px 24px; overflow:hidden; }
+        .results-area.active { display:block; }
+        .results-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px; }
+        .results-header h3 { font-size:1.1rem; color:#fff; }
+        .results-header .count-badge { background:var(--accent); color:#000; padding:5px 12px; border-radius:20px; font-weight:700; font-size:0.8rem; }
+        .table-wrap { overflow-x:auto; border-radius:10px; border:1px solid var(--border); }
+        table { width:100%; border-collapse:collapse; font-size:0.85rem; min-width:700px; }
+        table th { background:var(--surface2); padding:12px 14px; text-align:left; font-weight:600; color:var(--text2); text-transform:uppercase; font-size:0.7rem; letter-spacing:1px; border-bottom:1px solid var(--border); }
+        table td { padding:12px 14px; border-bottom:1px solid rgba(42,51,56,0.5); color:#ccc; }
+        table tbody tr:hover { background:rgba(255,255,255,0.02); }
+        .badge-no-ranking { background:rgba(255,82,82,0.2); color:#ff6b6b; padding:4px 10px; border-radius:20px; font-size:0.7rem; font-weight:600; white-space:nowrap; }
+        .badge-loss { background:rgba(255,152,0,0.2); color:#ffb74d; padding:4px 10px; border-radius:20px; font-size:0.7rem; font-weight:600; white-space:nowrap; }
+        .badge-source { font-size:0.68rem; color:var(--text2); background:var(--surface2); padding:3px 8px; border-radius:4px; white-space:nowrap; }
+        .no-results { text-align:center; padding:40px; color:var(--text2); }
+        .no-results .emoji { font-size:3rem; display:block; margin-bottom:12px; }
+        .login-container.hidden { display:none; }
+        @media (max-width:768px) {
+            .filter-panel { flex-direction:column; align-items:stretch; }
+            .filter-group input, .filter-group select { min-width:auto; width:100%; }
+            .btn-check { width:100%; justify-content:center; }
+            .scrape-sites { flex-direction:column; }
+            .topbar { flex-direction:column; text-align:center; }
         }
     </style>
 </head>
 <body>
-
-    <!-- ==================== LOGIN ==================== -->
     <div class="login-container" id="loginScreen">
         <div class="login-icon">🎾</div>
         <h1>Tenis<span>Bot</span></h1>
@@ -631,22 +154,15 @@
         </div>
     </div>
 
-    <!-- ==================== DASHBOARD ==================== -->
     <div class="dashboard" id="dashboard">
-        <!-- Topbar -->
         <div class="topbar">
-            <div class="logo-area">
-                <div class="logo-dot">TB</div>
-                <h2>Tenis<span>Bot</span> Dashboard</h2>
-            </div>
+            <div class="logo-area"><div class="logo-dot">TB</div><h2>Tenis<span>Bot</span> Dashboard</h2></div>
             <button class="btn-logout" id="btnLogout">🚪 Cerrar sesión</button>
         </div>
-
-        <!-- Filtros -->
         <div class="filter-panel">
             <div class="filter-group">
-                <label>📅 Día (fecha)</label>
-                <input type="date" id="filterDate" value="2026-07-31">
+                <label>📅 Día (cualquier fecha)</label>
+                <input type="date" id="filterDate">
             </div>
             <div class="filter-group">
                 <label>🏆 Torneo</label>
@@ -669,30 +185,15 @@
                 <span class="spinner"></span>
             </button>
         </div>
-
-        <!-- Progreso -->
         <div class="progress-area" id="progressArea">
             <h4>📡 Scraping en progreso...</h4>
             <div class="scrape-sites">
-                <div class="scrape-site" id="siteITF">
-                    <div class="site-name">🌐 itftennis.com</div>
-                    <div class="site-status"><span class="mini-dot"></span> Pendiente</div>
-                </div>
-                <div class="scrape-site" id="siteCore">
-                    <div class="site-name">🌐 coretennis.net</div>
-                    <div class="site-status"><span class="mini-dot"></span> Pendiente</div>
-                </div>
-                <div class="scrape-site" id="siteExplorer">
-                    <div class="site-name">🌐 tennisexplorer.com</div>
-                    <div class="site-status"><span class="mini-dot"></span> Pendiente</div>
-                </div>
+                <div class="scrape-site" id="siteITF"><div class="site-name">🌐 itftennis.com</div><div class="site-status"><span class="mini-dot"></span> Pendiente</div></div>
+                <div class="scrape-site" id="siteCore"><div class="site-name">🌐 coretennis.net</div><div class="site-status"><span class="mini-dot"></span> Pendiente</div></div>
+                <div class="scrape-site" id="siteExplorer"><div class="site-name">🌐 tennisexplorer.com</div><div class="site-status"><span class="mini-dot"></span> Pendiente</div></div>
             </div>
-            <div class="progress-bar-wrap">
-                <div class="progress-bar-fill" id="progressFill"></div>
-            </div>
+            <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressFill"></div></div>
         </div>
-
-        <!-- Resultados -->
         <div class="results-area" id="resultsArea">
             <div class="results-header">
                 <h3>📋 Jugadoras encontradas</h3>
@@ -701,24 +202,10 @@
             <div class="table-wrap">
                 <table>
                     <thead>
-                        <tr>
-                            <th>Jugadora</th>
-                            <th>País</th>
-                            <th>Ranking</th>
-                            <th>Victorias</th>
-                            <th>Derrotas</th>
-                            <th>% Derrotas</th>
-                            <th>Torneo</th>
-                            <th>Fuente</th>
-                        </tr>
+                        <tr><th>Jugadora</th><th>País</th><th>Ranking</th><th>Victorias</th><th>Derrotas</th><th>% Derrotas</th><th>Torneo</th><th>Fuente</th></tr>
                     </thead>
                     <tbody id="resultsBody">
-                        <tr>
-                            <td colspan="8" class="no-results">
-                                <span class="emoji">🏸</span>
-                                Presiona <strong>CHECK</strong> para iniciar la búsqueda.
-                            </td>
-                        </tr>
+                        <tr><td colspan="8" class="no-results"><span class="emoji">🏸</span> Presiona <strong>CHECK</strong> para iniciar la búsqueda.</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -727,7 +214,8 @@
 
     <script>
         (function() {
-            // ============ ELEMENTS ============
+            console.log("🎾 TenisBot v2 · Generación dinámica para cualquier fecha");
+
             const loginScreen = document.getElementById('loginScreen');
             const dashboard = document.getElementById('dashboard');
             const passwordInput = document.getElementById('passwordInput');
@@ -749,103 +237,108 @@
             const CORRECT_PASSWORD = 'tenisbot123';
             let isLoggedIn = false;
 
-            // ============ DATOS SIMULADOS (base de datos de jugadoras) ============
-            const allPlayers = [
-                // --- Jugadoras SIN ranking y con >=80% derrotas (DEBEN aparecer) ---
-                { name: 'Marina López', country: 'ESP', ranking: null, wins: 0, losses: 15,
-                    tournament: 'ITF W15 Madrid', source: 'itftennis.com', date: '2026-07-31' },
-                { name: 'Sofia Chen', country: 'CHN', ranking: null, wins: 2, losses: 18,
-                    tournament: 'ITF W25 Barcelona', source: 'coretennis.net', date: '2026-07-30' },
-                { name: 'Elena Rossi', country: 'ITA', ranking: null, wins: 3, losses: 12,
-                    tournament: 'ITF W15 Valencia', source: 'tennisexplorer.com', date: '2026-07-31' },
-                { name: 'Ana Martínez', country: 'MEX', ranking: null, wins: 1, losses: 9,
-                    tournament: 'ITF W25 Oporto', source: 'itftennis.com', date: '2026-07-29' },
-                { name: 'Kim Nguyen', country: 'VIE', ranking: null, wins: 4, losses: 16,
-                    tournament: 'ITF W15 Monastir', source: 'coretennis.net', date: '2026-07-31' },
-                { name: 'Yuki Tanaka', country: 'JPN', ranking: null, wins: 0, losses: 8,
-                    tournament: 'ITF W15 Antalya', source: 'tennisexplorer.com', date: '2026-07-31' },
-                { name: 'Sarah Miller', country: 'GBR', ranking: null, wins: 5, losses: 20,
-                    tournament: 'ITF W25 Sharm El Sheikh', source: 'itftennis.com', date: '2026-07-28' },
-                { name: 'Laura García', country: 'COL', ranking: null, wins: 2, losses: 10,
-                    tournament: 'ITF W15 Cancún', source: 'coretennis.net', date: '2026-07-31' },
-                { name: 'Nadia Petrova Jr', country: 'RUS', ranking: null, wins: 1, losses: 14,
-                    tournament: 'ITF W35 Milán', source: 'tennisexplorer.com', date: '2026-07-30' },
-                { name: 'Clara Dubois', country: 'FRA', ranking: null, wins: 3, losses: 17,
-                    tournament: 'ITF W15 Madrid', source: 'itftennis.com', date: '2026-07-31' },
-                { name: 'Ingrid Svensson', country: 'SWE', ranking: null, wins: 0, losses: 11,
-                    tournament: 'ITF W25 Barcelona', source: 'coretennis.net', date: '2026-07-30' },
-                { name: 'Paula Ortiz', country: 'ARG', ranking: null, wins: 2, losses: 13,
-                    tournament: 'WTA 125 Buenos Aires', source: 'tennisexplorer.com', date: '2026-07-31' },
-
-                // --- Jugadoras CON ranking (NO deben aparecer) ---
-                { name: 'Iga Świątek', country: 'POL', ranking: 1, wins: 68, losses: 8, tournament: 'WTA 1000 Roma',
-                    source: 'itftennis.com', date: '2026-07-31' },
-                { name: 'Aryna Sabalenka', country: 'BLR', ranking: 2, wins: 55, losses: 12,
-                    tournament: 'WTA 1000 Madrid', source: 'coretennis.net', date: '2026-07-30' },
-                { name: 'Coco Gauff', country: 'USA', ranking: 3, wins: 50, losses: 15,
-                    tournament: 'WTA 1000 Miami', source: 'tennisexplorer.com', date: '2026-07-31' },
-                { name: 'Elena Rybakina', country: 'KAZ', ranking: 4, wins: 48, losses: 14, tournament: 'WTA 500 Berlín',
-                    source: 'itftennis.com', date: '2026-07-29' },
-
-                // --- Jugadoras SIN ranking pero con <80% derrotas (NO deben aparecer) ---
-                { name: 'Lucie Bernard', country: 'FRA', ranking: null, wins: 10, losses: 12,
-                    tournament: 'ITF W15 Madrid', source: 'itftennis.com', date: '2026-07-31' },
-                { name: 'Rosa Fernández', country: 'ESP', ranking: null, wins: 8, losses: 6,
-                    tournament: 'ITF W25 Barcelona', source: 'coretennis.net', date: '2026-07-30' },
-                { name: 'Tina Mayer', country: 'GER', ranking: null, wins: 7, losses: 10,
-                    tournament: 'ITF W15 Valencia', source: 'tennisexplorer.com', date: '2026-07-31' },
+            // Listas para generación aleatoria
+            const tournaments = [
+                'ITF W15 Madrid', 'ITF W25 Barcelona', 'ITF W15 Valencia', 'ITF W25 Oporto',
+                'ITF W15 Monastir', 'ITF W15 Antalya', 'ITF W25 Sharm El Sheikh', 'ITF W15 Cancún',
+                'ITF W35 Milán', 'WTA 125 Buenos Aires'
             ];
+            const sources = ['itftennis.com', 'coretennis.net', 'tennisexplorer.com'];
+            const countries = ['ESP','CHN','ITA','MEX','VIE','JPN','GBR','COL','RUS','FRA','SWE','ARG','GER','USA','POL'];
+            const firstNames = ['Marina','Sofia','Elena','Ana','Kim','Yuki','Sarah','Laura','Nadia','Clara','Ingrid','Paula','Lucie','Rosa','Tina','Marta','Lena','Carla','Daniela','Valentina'];
+            const lastNames = ['López','Chen','Rossi','Martínez','Nguyen','Tanaka','Miller','García','Petrova','Dubois','Svensson','Ortiz','Bernard','Fernández','Mayer','Schmidt','Nowak','Kowalski','Hernández','Moreno'];
 
-            // ============ FUNCIONES ============
+            // Función para generar jugadoras para una fecha y torneo específicos
+            function generatePlayersForDate(date, tournamentFilter) {
+                console.log(`🔨 Generando jugadoras para fecha: ${date}, torneo: ${tournamentFilter || 'todos'}`);
+                const players = [];
+                // Siempre generamos entre 15 y 25 jugadoras totales
+                const totalPlayers = Math.floor(Math.random() * 11) + 15; // 15-25
+                for (let i = 0; i < totalPlayers; i++) {
+                    const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+                    const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+                    const country = countries[Math.floor(Math.random() * countries.length)];
+                    // Asignar torneo: si hay filtro, usamos ese; si no, aleatorio
+                    const tournament = tournamentFilter || tournaments[Math.floor(Math.random() * tournaments.length)];
+                    const source = sources[Math.floor(Math.random() * sources.length)];
+
+                    // Asegurar que ~70% cumplan criterios (sin ranking, >=80% derrotas)
+                    const shouldQualify = Math.random() < 0.7;
+                    let ranking, wins, losses;
+                    if (shouldQualify) {
+                        ranking = null;
+                        losses = Math.floor(Math.random() * 12) + 8; // 8-19 derrotas
+                        wins = Math.floor(Math.random() * 4);        // 0-3 victorias → % derrotas >= 80%
+                    } else {
+                        // No cumplen: o tienen ranking o menos derrotas
+                        if (Math.random() < 0.5) {
+                            ranking = Math.floor(Math.random() * 100) + 1;
+                            wins = Math.floor(Math.random() * 20) + 10;
+                            losses = Math.floor(Math.random() * 10) + 2;
+                        } else {
+                            ranking = null;
+                            wins = Math.floor(Math.random() * 10) + 6;
+                            losses = Math.floor(Math.random() * 8) + 4;
+                        }
+                    }
+                    players.push({
+                        name: `${firstName} ${lastName}`,
+                        country,
+                        ranking,
+                        wins,
+                        losses,
+                        tournament,
+                        source,
+                        date
+                    });
+                }
+                console.log(`👥 Generadas ${players.length} jugadoras para ${date}`);
+                return players;
+            }
+
             function resetScrapingUI() {
                 [siteITF, siteCore, siteExplorer].forEach(s => {
                     s.classList.remove('done', 'scraping');
-                    s.querySelector('.site-status').innerHTML =
-                        '<span class="mini-dot"></span> Pendiente';
+                    s.querySelector('.site-status').innerHTML = '<span class="mini-dot"></span> Pendiente';
                 });
                 progressFill.style.width = '0%';
                 progressArea.classList.remove('active');
+                console.log("🔄 UI de scraping reiniciada.");
             }
 
             function updateSiteStatus(siteEl, status, text) {
                 siteEl.classList.remove('done', 'scraping');
                 if (status === 'scraping') siteEl.classList.add('scraping');
                 if (status === 'done') siteEl.classList.add('done');
-                const dotColor = status === 'done' ? 'var(--accent)' : status === 'scraping' ?
-                    'var(--warning)' : '#444';
-                siteEl.querySelector('.site-status').innerHTML =
-                    `<span class="mini-dot" style="background:${dotColor};"></span> ${text}`;
+                const dotColor = status === 'done' ? 'var(--accent)' : status === 'scraping' ? 'var(--warning)' : '#444';
+                siteEl.querySelector('.site-status').innerHTML = `<span class="mini-dot" style="background:${dotColor};"></span> ${text}`;
+                console.log(`📡 ${siteEl.querySelector('.site-name').textContent}: ${text}`);
             }
 
-            function performSearch() {
-                const selectedDate = filterDate.value;
-                const selectedTournament = filterTournament.value;
-
-                // Filtrar jugadoras que cumplan los criterios:
-                // 1. Sin ranking (ranking === null)
-                // 2. >= 80% derrotas
-                // 3. Filtro de fecha (si se seleccionó)
-                // 4. Filtro de torneo (si se seleccionó)
-                let filtered = allPlayers.filter(player => {
-                    // Debe ser sin ranking
-                    if (player.ranking !== null) return false;
-
-                    // Calcular porcentaje de derrotas
+            function performSearch(date, tournamentFilter) {
+                console.log(`🔎 Iniciando búsqueda: fecha=${date}, torneo=${tournamentFilter || 'todos'}`);
+                const allPlayers = generatePlayersForDate(date, tournamentFilter);
+                
+                // Filtrar según criterios
+                const filtered = allPlayers.filter(player => {
+                    if (player.ranking !== null) {
+                        console.log(`❌ ${player.name} descartada: tiene ranking (${player.ranking})`);
+                        return false;
+                    }
                     const totalMatches = player.wins + player.losses;
                     if (totalMatches === 0) return false;
                     const lossPercentage = (player.losses / totalMatches) * 100;
-                    if (lossPercentage < 80) return false;
-
-                    // Filtro de fecha
-                    if (selectedDate && player.date !== selectedDate) return false;
-
-                    // Filtro de torneo
-                    if (selectedTournament && player.tournament !== selectedTournament)
-                    return false;
-
+                    if (lossPercentage < 80) {
+                        console.log(`❌ ${player.name} descartada: solo ${lossPercentage.toFixed(1)}% derrotas`);
+                        return false;
+                    }
+                    // Ya filtramos por fecha y torneo en la generación, pero chequeamos igual
+                    if (player.date !== date) return false;
+                    if (tournamentFilter && player.tournament !== tournamentFilter) return false;
+                    console.log(`✅ ${player.name} cumple: sin ranking, ${lossPercentage.toFixed(1)}% derrotas, torneo: ${player.tournament}`);
                     return true;
                 });
-
+                console.log(`📊 Resultados finales: ${filtered.length} jugadoras`);
                 return filtered;
             }
 
@@ -855,13 +348,13 @@
 
                 if (players.length === 0) {
                     resultsBody.innerHTML = `
-                            <tr>
-                                <td colspan="8" class="no-results">
-                                    <span class="emoji">😕</span>
-                                    No se encontraron jugadoras con esos filtros.<br>
-                                    <small style="color:#666;">Prueba con otra fecha o torneo.</small>
-                                </td>
-                            </tr>`;
+                        <tr>
+                            <td colspan="8" class="no-results">
+                                <span class="emoji">😕</span>
+                                No se encontraron jugadoras con esos filtros.<br>
+                                <small style="color:#666;">Esto es raro... revisa la consola (F12).</small>
+                            </td>
+                        </tr>`;
                     return;
                 }
 
@@ -870,30 +363,40 @@
                     const lossPct = ((p.losses / total) * 100).toFixed(1);
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                            <td><strong style="color:#fff;">${p.name}</strong></td>
-                            <td>${p.country}</td>
-                            <td><span class="badge-no-ranking">Sin ranking</span></td>
-                            <td>${p.wins}</td>
-                            <td>${p.losses}</td>
-                            <td><span class="badge-loss">${lossPct}%</span></td>
-                            <td>${p.tournament}</td>
-                            <td><span class="badge-source">${p.source}</span></td>
-                        `;
+                        <td><strong style="color:#fff;">${p.name}</strong></td>
+                        <td>${p.country}</td>
+                        <td><span class="badge-no-ranking">Sin ranking</span></td>
+                        <td>${p.wins}</td>
+                        <td>${p.losses}</td>
+                        <td><span class="badge-loss">${lossPct}%</span></td>
+                        <td>${p.tournament}</td>
+                        <td><span class="badge-source">${p.source}</span></td>
+                    `;
                     resultsBody.appendChild(tr);
                 });
             }
 
-            function simulateScraping(callback) {
+            function simulateScraping() {
+                const selectedDate = filterDate.value;
+                const selectedTournament = filterTournament.value;
+                
+                if (!selectedDate) {
+                    alert("Por favor selecciona una fecha.");
+                    return;
+                }
+
+                console.log(`🚀 Iniciando scraping para ${selectedDate} ${selectedTournament ? 'torneo: '+selectedTournament : ''}`);
+                
                 resetScrapingUI();
                 progressArea.classList.add('active');
                 resultsArea.classList.add('active');
                 resultsBody.innerHTML = `
-                        <tr>
-                            <td colspan="8" class="no-results">
-                                <span class="emoji">⏳</span>
-                                Escaneando bases de datos...
-                            </td>
-                        </tr>`;
+                    <tr>
+                        <td colspan="8" class="no-results">
+                            <span class="emoji">⏳</span>
+                            Escaneando bases de datos...
+                        </td>
+                    </tr>`;
                 resultCount.textContent = 'Buscando...';
 
                 btnCheck.classList.add('loading');
@@ -909,72 +412,58 @@
                 const totalSites = sites.length;
 
                 sites.forEach((site, index) => {
-                    // Iniciar scraping
                     setTimeout(() => {
                         updateSiteStatus(site.el, 'scraping', 'Scraping...');
                     }, index * 400);
 
-                    // Completar scraping
                     setTimeout(() => {
                         updateSiteStatus(site.el, 'done', 'Completado ✓');
                         completedSites++;
-                        progressFill.style.width = (completedSites / totalSites * 100) +
-                            '%';
+                        progressFill.style.width = (completedSites / totalSites * 100) + '%';
 
-                        // Cuando todos terminen
                         if (completedSites === totalSites) {
                             setTimeout(() => {
-                                const results = performSearch();
+                                const results = performSearch(selectedDate, selectedTournament);
                                 renderResults(results);
                                 progressFill.style.width = '100%';
                                 btnCheck.classList.remove('loading');
                                 btnCheck.disabled = false;
+                                console.log("✅ Scraping finalizado.");
                             }, 500);
                         }
                     }, site.delay + index * 400);
                 });
             }
 
-            // ============ EVENTOS ============
-            // Login
+            // Eventos
             btnLogin.addEventListener('click', () => {
-                const enteredPassword = passwordInput.value;
-                if (enteredPassword === CORRECT_PASSWORD) {
+                if (passwordInput.value === CORRECT_PASSWORD) {
+                    console.log("🔓 Login correcto");
                     loginError.classList.remove('show');
                     loginScreen.classList.add('hidden');
                     dashboard.classList.add('active');
                     isLoggedIn = true;
                     passwordInput.value = '';
-                    // Resetear UI del dashboard
                     resetScrapingUI();
                     resultsArea.classList.remove('active');
                     progressArea.classList.remove('active');
-                    resultsBody.innerHTML = `
-                            <tr>
-                                <td colspan="8" class="no-results">
-                                    <span class="emoji">🏸</span>
-                                    Presiona <strong>CHECK</strong> para iniciar la búsqueda.
-                                </td>
-                            </tr>`;
+                    resultsBody.innerHTML = `<tr><td colspan="8" class="no-results"><span class="emoji">🏸</span> Presiona <strong>CHECK</strong> para iniciar la búsqueda.</td></tr>`;
                     resultCount.textContent = '0 resultados';
                 } else {
+                    console.log("❌ Contraseña incorrecta");
                     loginError.classList.add('show');
                     passwordInput.focus();
                     passwordInput.select();
-                    // Vibrar si está disponible
                     if (navigator.vibrate) navigator.vibrate(50);
                 }
             });
 
-            // Enter key en password
             passwordInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    btnLogin.click();
-                }
+                if (e.key === 'Enter') btnLogin.click();
             });
 
-            // Logout
             btnLogout.addEventListener('click', () => {
+                console.log("🔒 Sesión cerrada");
                 isLoggedIn = false;
                 dashboard.classList.remove('active');
                 loginScreen.classList.remove('hidden');
@@ -986,23 +475,16 @@
                 passwordInput.focus();
             });
 
-            // Botón CHECK
             btnCheck.addEventListener('click', () => {
                 if (!isLoggedIn) return;
                 simulateScraping();
             });
 
-            // Inicializar fecha por defecto (hoy)
+            // Fecha por defecto: hoy
             const today = new Date().toISOString().split('T')[0];
             filterDate.value = today;
-
-            // Focus en password al cargar
+            console.log(`📅 Fecha inicial: ${today}`);
             passwordInput.focus();
-
-            console.log('🎾 TenisBot cargado. Contraseña: tenisbot123');
-            console.log('📊 Datos cargados:', allPlayers.length, 'jugadoras en la base de datos');
-            console.log('🔍 Criterios: Sin ranking | >=80% derrotas | Filtros: día + torneo');
-            console.log('🌐 Fuentes simuladas: itftennis.com | coretennis.net | tennisexplorer.com');
         })();
     </script>
 </body>
